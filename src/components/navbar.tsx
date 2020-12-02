@@ -1,8 +1,10 @@
 import React from 'react'
+import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faBell } from '@fortawesome/free-solid-svg-icons'
+import { GET_TASKS_QUERY } from '../graphql';
 
 const Container = styled.div`
   display:  flex;
@@ -45,12 +47,13 @@ const Counter = styled.div`
   right: 20px;
 `
 
-type NavBarProps = {
-  page: string
-}
 
 const NavBar = () => {
   const { pathname } = useRouter()
+
+  const { data, loading } = useQuery(GET_TASKS_QUERY)
+
+  const taskItems = loading ? 0 : data.tasks.length
 
   return (
     <Container>
@@ -59,7 +62,8 @@ const NavBar = () => {
         <FontAwesomeIcon icon={faSearch} size='lg' />
         <div className="notification">
           <FontAwesomeIcon icon={faBell} size="lg" />
-          <Counter>{'0'}
+          <Counter>
+            {taskItems}
           </Counter>
         </div>
         <div className="user">
