@@ -3,8 +3,9 @@ import { useQuery, useMutation, gql } from '@apollo/client';
 import Image from 'next/image'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
-import { GET_TASKS_QUERY, CREATE_TASK_MUTATION } from '../graphql'
+import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
+import { GET_TASKS_QUERY, CREATE_TASK_MUTATION, DELETE_TASK_MUTATION } from '../graphql'
+import ConfirmationModal from '../components/confirmation-modal';
 
 const Container = styled.div`
   display: flex;
@@ -54,8 +55,15 @@ const Task = styled.div`
   border-radius: 5px;
   font-size:  14px;
   cursor: default;
+  & .icons {
+    display: flex;
+    & > svg {
+      margin-right: 16px;
+    }
+  }
   & svg {
     display: none;
+    cursor: pointer;
   }
   &:hover {
     box-shadow: 0px 2px 6px rgba(92, 84, 122, 0.2);
@@ -74,9 +82,15 @@ type TaskType = {
 const TaskScreen = () => {
   const [value, setValue] = useState('')
 
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false)
+
+  const [selectedTask, setSelectedTask] = useState<number | null>(null)
+
   const { data, loading } = useQuery(GET_TASKS_QUERY)
 
   const [createTask] = useMutation(CREATE_TASK_MUTATION)
+
+  const [deleteTask] = useMutation(DELETE_TASK_MUTATION)
 
   if (loading) {
     return (
@@ -120,6 +134,33 @@ const TaskScreen = () => {
 
   const isEmptyTasks = data.tasks.length === 0
 
+  const handleClickDelete = (id: number) => {
+    setOpenConfirmationModal(true)
+    setSelectedTask(id)
+  }
+
+  const handleDelete = () => {
+    deleteTask({
+      variables: {
+        id: selectedTask,
+      },
+      update(cache) {
+        cache.modify({
+          fields: {
+            tasks(existingTaskRefs, { readField }) {
+              return existingTaskRefs.filter(
+                (taskRef: TaskType) => selectedTask !== readField('id', taskRef),
+              );
+            },
+          }
+        });
+      }
+    })
+
+    setOpenConfirmationModal(false)
+    setSelectedTask(null)
+  }
+
   return (
     <Container>
       <form onSubmit={handleSubmit}>
@@ -136,11 +177,19 @@ const TaskScreen = () => {
             {data.tasks.map((task: TaskType) => (
               <Task key={task.id}>
                 <span>{task.name}</span>
-                <FontAwesomeIcon icon={faTrash} />
+                <div className="icons">
+                  <FontAwesomeIcon icon={faPen} />
+                  <FontAwesomeIcon icon={faTrash} onClick={() => handleClickDelete(task.id)} />
+                </div>
               </Task>
             ))}
           </TaskList>
         )}
+      <ConfirmationModal
+        show={openConfirmationModal}
+        onHide={() => setOpenConfirmationModal(false)}
+        mainButtonAction={handleDelete}
+      />
     </Container>
   )
 }
