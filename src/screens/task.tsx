@@ -4,8 +4,9 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
-import { GET_TASKS_QUERY, CREATE_TASK_MUTATION, DELETE_TASK_MUTATION } from '../graphql'
+import { GET_TASKS_QUERY, CREATE_TASK_MUTATION, DELETE_TASK_MUTATION, UPDATE_TASK_MUTATION } from '../graphql'
 import ConfirmationModal from '../components/confirmation-modal';
+import EditTaskModal from '../components/edit-task-modal';
 
 const Container = styled.div`
   display: flex;
@@ -84,6 +85,10 @@ const TaskScreen = () => {
 
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false)
 
+  const [openEditModal, setOpenEditModal] = useState(false)
+
+  const [editValue, setEditValue] = useState('')
+
   const [selectedTask, setSelectedTask] = useState<number | null>(null)
 
   const { data, loading } = useQuery(GET_TASKS_QUERY)
@@ -91,6 +96,8 @@ const TaskScreen = () => {
   const [createTask] = useMutation(CREATE_TASK_MUTATION)
 
   const [deleteTask] = useMutation(DELETE_TASK_MUTATION)
+
+  const [updateTask] = useMutation(UPDATE_TASK_MUTATION)
 
   if (loading) {
     return (
@@ -139,6 +146,12 @@ const TaskScreen = () => {
     setSelectedTask(id)
   }
 
+  const handleClickUpdate = (id: number, name: string) => {
+    setOpenEditModal(true)
+    setSelectedTask(id)
+    setEditValue(name)
+  }
+
   const handleDelete = () => {
     deleteTask({
       variables: {
@@ -161,6 +174,21 @@ const TaskScreen = () => {
     setSelectedTask(null)
   }
 
+  const handleUpdate = (id: number | null, name?: string, completed: boolean = false) => {
+    if (id) {
+      updateTask({
+        variables: {
+          id,
+          name,
+          completed,
+        }
+      })
+    }
+    setOpenEditModal(false)
+    setSelectedTask(null)
+    setEditValue('')
+  }
+
   return (
     <Container>
       <form onSubmit={handleSubmit}>
@@ -178,7 +206,10 @@ const TaskScreen = () => {
               <Task key={task.id}>
                 <span>{task.name}</span>
                 <div className="icons">
-                  <FontAwesomeIcon icon={faPen} />
+                  <FontAwesomeIcon
+                    icon={faPen}
+                    onClick={() => handleClickUpdate(task.id, task.name)}
+                  />
                   <FontAwesomeIcon icon={faTrash} onClick={() => handleClickDelete(task.id)} />
                 </div>
               </Task>
@@ -189,6 +220,12 @@ const TaskScreen = () => {
         show={openConfirmationModal}
         onHide={() => setOpenConfirmationModal(false)}
         mainButtonAction={handleDelete}
+      />
+      <EditTaskModal
+        show={openEditModal}
+        onHide={() => setOpenEditModal(false)}
+        mainButtonAction={(inputValue) => handleUpdate(selectedTask, inputValue)}
+        inputValue={editValue}
       />
     </Container>
   )
