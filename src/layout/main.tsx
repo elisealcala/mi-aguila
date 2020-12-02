@@ -1,25 +1,22 @@
 import React from 'react'
-import styled, { createGlobalStyle } from 'styled-components'
+import styled from 'styled-components'
+import NavBar from '../components/navbar'
 import SideBar from '../components/sidebar'
 
-const GlobalStyle = createGlobalStyle`
-  body {
-    padding: 0;
-    margin: 0;
-    font-family: sans-serif
-  }
-`
 
 const Container = styled.div`
   display: flex;
+  font-family: 'Montserrat';
 `
 
 const MainLayout: React.FC = ({ children }) => {
   return (
     <Container>
-      <GlobalStyle />
       <SideBar />
-      {children}
+      <div style={{ width: '100%' }}>
+        <NavBar />
+        {children}
+      </div>
     </Container>
   )
 }
