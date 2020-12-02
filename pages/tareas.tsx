@@ -1,5 +1,5 @@
 import React from 'react'
-import TaskScreen from '../src/screens/task-screen';
+import TaskScreen from '../src/screens/task';
 
 const Tasks = () => {
   return (
