@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 import styled from 'styled-components'
 
@@ -74,10 +75,11 @@ const menuOptions = [
 ]
 
 const SideBar = () => {
-  const [selectedOption, setSelectedOption] = useState('inicio')
+  const router = useRouter()
 
   const handleClick = (slug: string) => {
-    setSelectedOption(slug)
+
+    router.push(slug)
   }
 
   return (
@@ -89,7 +91,7 @@ const SideBar = () => {
       {menuOptions.map(option => (
         <Option
           onClick={() => handleClick(option.slug)}
-          selected={option.slug === selectedOption}
+          selected={option.slug === router.pathname.replace('/', '')}
           key={option.id}
         >
           <span>{option.label}</span>
