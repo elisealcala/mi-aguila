@@ -3,8 +3,6 @@ import Cookies from 'js-cookie';
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../src/lib/apollo-client";
 import '../src/css/styles.css'
-import { setLogout, verifyToken } from '../src/middlewares/utils';
-
 
 // @ts-ignore
 export default function MyApp({ Component, pageProps }) {
@@ -16,20 +14,16 @@ export default function MyApp({ Component, pageProps }) {
 
   const token = Cookies.get('token')
 
-  const profile = token ? verifyToken(token.split(' ')[1]) : ''
-
   useEffect(() => {
-    if (!profile) {
-      setLogout()
+    if (token) {
+      if (!showMessage) {
+        const timer = setTimeout(() => {
+          setShowMessage(true)
+        }, 240000);
+        return () => clearTimeout(timer);
+      }
     }
-
-    if (profile && !showMessage) {
-      const timer = setTimeout(() => {
-        setShowMessage(true)
-      }, 240000);
-      return () => clearTimeout(timer);
-    }
-  }, [profile, showMessage])
+  }, [showMessage, token])
 
 
   return (

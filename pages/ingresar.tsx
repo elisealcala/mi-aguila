@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
 import AppLayout from '../src/layout/app'
 import LoginScreen from '../src/screens/login'
-import { absoluteUrl, getAppCookies, setLogout, verifyToken } from '../src/middlewares/utils'
+import { absoluteUrl, getAppCookies, verifyToken, setLogout } from '../src/middlewares/utils'
 
 
 type LoginPageProps = {
