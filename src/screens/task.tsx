@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useQuery, useMutation, gql } from '@apollo/client';
-import Image from 'next/image'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
@@ -114,7 +113,7 @@ const TaskScreen = () => {
   if (loading) {
     return (
       <Container>
-        <Image src="/loading.gif" width="150" height="150" />
+        <img src={require('../images/loading.gif')} width="150" height="150" />
       </Container>
     )
   }

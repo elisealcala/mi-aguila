@@ -72,7 +72,7 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
             payload,
             KEY,
             {
-              expiresIn: '1m',
+              expiresIn: '5m',
             },
             (_: any, token: string) => {
 

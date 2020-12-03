@@ -1,6 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
 import styled from 'styled-components'
 import { setLogout } from '../middlewares/utils'
 
@@ -88,7 +87,7 @@ const SideBar = () => {
   return (
     <SidebarStyled>
       <Logo>
-        <Image src="/logo.png" width="34" height="34" />
+        <img src={require('../images/logo.png')} width="34" height="34" />
         <h1>Mi Águila</h1>
       </Logo>
       {menuOptions.map(option => (
