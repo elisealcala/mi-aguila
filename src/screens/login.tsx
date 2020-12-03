@@ -68,10 +68,8 @@ type LoginPageProps = {
   profile: string;
 }
 
-const LoginScreen = ({ baseApiUrl, profile }: LoginPageProps) => {
+const LoginScreen = ({ baseApiUrl }: LoginPageProps) => {
   const [loading, setLoading] = useState(false)
-
-  const [stateMessage, setStateMessage] = useState({})
 
   const formik = useFormik({
     initialValues: {
@@ -100,8 +98,6 @@ const LoginScreen = ({ baseApiUrl, profile }: LoginPageProps) => {
         Cookies.set('token', result.token);
 
         Router.push('/inicio')
-      } else {
-        setStateMessage(result)
       }
 
       setLoading(false)
