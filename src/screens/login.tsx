@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Router from 'next/router'
 import styled from 'styled-components'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import Cookies from 'js-cookie'
 import Button from '../components/button'
 
 const Schema = Yup.object().shape({
@@ -61,7 +63,15 @@ const Error = styled.span`
   color: red;
 `
 
-const LoginScreen = () => {
+type LoginPageProps = {
+  baseApiUrl: any;
+  profile: string;
+}
+
+const LoginScreen = ({ baseApiUrl, profile }: LoginPageProps) => {
+  const [loading, setLoading] = useState(false)
+
+  const [stateMessage, setStateMessage] = useState({})
 
   const formik = useFormik({
     initialValues: {
@@ -69,7 +79,33 @@ const LoginScreen = () => {
       password: '',
     },
     validationSchema: Schema,
-    onSubmit: (values) => console.log(values)
+    onSubmit: async (values) => {
+      setLoading(true)
+
+      const loginApi: Response = await fetch(`${baseApiUrl}/auth`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values),
+      }).catch<Response>((error) => {
+        console.error(error)
+        throw error;
+      })
+
+      const result = await loginApi.json()
+
+      if (result.success && result.token) {
+        Cookies.set('token', result.token);
+
+        Router.push('/inicio')
+      } else {
+        setStateMessage(result)
+      }
+
+      setLoading(false)
+    }
   })
 
   return (
@@ -102,7 +138,7 @@ const LoginScreen = () => {
             <Error>{formik.errors.password}</Error>
           )}
         </div>
-        <Button label="Ingresar" type="submit" />
+        <Button disabled={loading} label="Ingresar" type="submit" />
       </form>
     </Container>
   )

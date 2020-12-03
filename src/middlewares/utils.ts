@@ -69,8 +69,7 @@ export function absoluteUrl(req: IncomingMessage, setLocalhost?: any) {
  * @params {none} set action for logout and remove cookie
  * @return {function} router function to redirect
  */
-export function setLogout(e: React.FormEvent<HTMLFormElement>) {
-  e.preventDefault();
+export function setLogout() {
   Cookies.remove('token');
   Router.push('/ingresar');
 }

@@ -1,4 +1,3 @@
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { NextApiRequest , NextApiResponse} from 'next'
 
@@ -9,25 +8,25 @@ const USERS = [
   {
     id: 1,
     email: 'example1@example.com',
-    password: '$2y$10$mj1OMFvVmGAR4gEEXZGtA',
+    password: '$2y$10$mj1OMFvVmGAR4gEEXZGtA', // password
     createdAt: '2020-06-14 18:23:45',
   },
   {
     id: 2,
     email: 'example2@example.com',
-    password: '$2y$10$mj1OMFvVmGAR4gEEXZGtA',
+    password: '$2y$10$mj1OMFvVmGAR4gEEXZGtA', // password
     createdAt: '2020-06-14 18:23:45',
   },
   {
     id: 3,
     email: 'example3@example.com',
-    password: '$2y$10$mj1OMFvVmGAR4gEEXZGtA',
+    password: '$2y$10$mj1OMFvVmGAR4gEEXZGtA', // password
     createdAt: '2020-06-14 18:23:45',
   },
   {
     id: 4,
     email: 'example4@example.com',
-    password: '$2y$10$mj1OMFvVmGAR4gEEXZGtA',
+    password: '$2y$10$mj1OMFvVmGAR4gEEXZGtA', // password
     createdAt: '2020-06-14 18:23:45',
   },
 ];
@@ -60,35 +59,35 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
         const userPassword = user?.password
         const userCreated = user?.createdAt
 
-        bcrypt.compare(password, userPassword).then((isMatch: any) => {
+        const isMatch = password === userPassword
 
-          if (isMatch) {
-            const payload = {
-              id: userId,
-              email: userEmail,
-              createdAt: userCreated,
-            };
+        if (isMatch) {
+          const payload = {
+            id: userId,
+            email: userEmail,
+            createdAt: userCreated,
+          };
 
-            jwt.sign(
-              payload,
-              KEY,
-              {
-                expiresIn: 300, // 5 minutes
-              },
-              (_: any, token: string) => {
+          jwt.sign(
+            payload,
+            KEY,
+            {
+              expiresIn: 300, // 5 minutes
+            },
+            (_: any, token: string) => {
 
-                res.status(200).json({
-                  success: true,
-                  token: 'Bearer ' + token,
-                });
-              },
-            );
-          } else {
-            res
-              .status(400)
-              .json({ status: 'error', error: 'Password incorrect' });
-          }
-        });
+              res.status(200).json({
+                success: true,
+                token: 'Bearer ' + token,
+              });
+            },
+          );
+        } else {
+          res
+            .status(400)
+            .json({ status: 'error', error: 'Password incorrect' });
+        }
+    
         break;
       case 'PUT':
         break;

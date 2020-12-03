@@ -26,20 +26,21 @@ type ButtonProps = {
   label: string;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
-  variant?: 'outlined' | 'contained'
+  variant?: 'outlined' | 'contained';
+  disabled?: boolean;
 }
 
-const Button = ({ label, onClick, variant = 'contained', type }: ButtonProps) => {
+const Button = ({ label, onClick, variant = 'contained', type, disabled }: ButtonProps) => {
   if (variant === "outlined") {
     return (
-      <SecondaryButton type={type} onClick={onClick}>
+      <SecondaryButton disabled={disabled} type={type} onClick={onClick}>
         {label}
       </SecondaryButton>
     )
   }
 
   return (
-    <PrimaryButton type={type} onClick={onClick}>
+    <PrimaryButton disabled={disabled} type={type} onClick={onClick}>
       {label}
     </PrimaryButton>
   )

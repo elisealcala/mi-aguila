@@ -2,6 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import styled from 'styled-components'
+import { setLogout } from '../middlewares/utils'
 
 
 const SidebarStyled = styled.div`
@@ -52,6 +53,7 @@ const Option = styled.div<{ selected?: boolean }>`
 
 const Configuration = styled.div`
   padding: 34px;
+  cursor: pointer;
   border-top: 1px solid #DFE0EB;
   color: #A4A6B3;
   margin-top: auto;
@@ -98,8 +100,8 @@ const SideBar = () => {
           <span>{option.label}</span>
         </Option>
       ))}
-      <Configuration>
-        <span>Configuración</span>
+      <Configuration onClick={setLogout}>
+        <span>Cerrar sesión</span>
       </Configuration>
     </SidebarStyled>
   )
