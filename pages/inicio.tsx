@@ -1,4 +1,5 @@
 import React from 'react'
+import MainLayout from '../src/layout/main'
 import HomeScreen from '../src/screens/home-screen'
 
 const Home = () => {
@@ -6,5 +7,7 @@ const Home = () => {
     <HomeScreen />
   )
 }
+
+Home.Layout = MainLayout
 
 export default Home

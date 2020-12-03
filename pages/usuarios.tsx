@@ -1,4 +1,5 @@
 import React from 'react'
+import MainLayout from '../src/layout/main';
 import UsersScreen from '../src/screens/users';
 
 const Users = () => {
@@ -7,5 +8,7 @@ const Users = () => {
     <UsersScreen />
   )
 }
+
+Users.Layout = MainLayout
 
 export default Users;
