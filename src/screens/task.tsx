@@ -47,7 +47,7 @@ const TaskList = styled.div`
   }
 `
 
-const Task = styled.div`
+const Task = styled.div<{ completed: boolean }>`
   padding: 10px;
   display: flex;
   width: 100%;
@@ -62,6 +62,9 @@ const Task = styled.div`
       margin-right: 16px;
     }
   }
+  & > span {
+    cursor: pointer;
+  }
   & svg {
     display: none;
     cursor: pointer;
@@ -72,6 +75,17 @@ const Task = styled.div`
       display: block;
     }
   }
+  ${({ completed }) => completed && `
+    opacity: 0.5;
+    position: relative;
+    &:after{
+      position: absolute;
+      content: '';
+      width: 80%;
+      height: 1px;
+      background: #DFE0EB;
+    }
+  `}
 `
 
 type TaskType = {
@@ -87,9 +101,7 @@ const TaskScreen = () => {
 
   const [openEditModal, setOpenEditModal] = useState(false)
 
-  const [editValue, setEditValue] = useState('')
-
-  const [selectedTask, setSelectedTask] = useState<number | null>(null)
+  const [selectedTask, setSelectedTask] = useState<TaskType | null>(null)
 
   const { data, loading } = useQuery(GET_TASKS_QUERY)
 
@@ -141,52 +153,52 @@ const TaskScreen = () => {
 
   const isEmptyTasks = data.tasks.length === 0
 
-  const handleClickDelete = (id: number) => {
+  const handleClickDelete = (task: TaskType) => {
     setOpenConfirmationModal(true)
-    setSelectedTask(id)
+    setSelectedTask(task)
   }
 
-  const handleClickUpdate = (id: number, name: string) => {
+  const handleClickUpdate = (task: TaskType) => {
     setOpenEditModal(true)
-    setSelectedTask(id)
-    setEditValue(name)
+    setSelectedTask(task)
   }
 
   const handleDelete = () => {
-    deleteTask({
-      variables: {
-        id: selectedTask,
-      },
-      update(cache) {
-        cache.modify({
-          fields: {
-            tasks(existingTaskRefs, { readField }) {
-              return existingTaskRefs.filter(
-                (taskRef: TaskType) => selectedTask !== readField('id', taskRef),
-              );
-            },
-          }
-        });
-      }
-    })
+    if (selectedTask) {
+      deleteTask({
+        variables: {
+          id: selectedTask.id,
+        },
+        update(cache) {
+          cache.modify({
+            fields: {
+              tasks(existingTaskRefs, { readField }) {
+                return existingTaskRefs.filter(
+                  (taskRef: TaskType) => selectedTask.id !== readField('id', taskRef),
+                );
+              },
+            }
+          });
+        }
+      })
+    }
 
     setOpenConfirmationModal(false)
     setSelectedTask(null)
   }
 
-  const handleUpdate = (id: number | null, name?: string, completed: boolean = false) => {
-    if (id) {
-      updateTask({
-        variables: {
-          id,
-          name,
-          completed,
-        }
-      })
-    }
+  const handleUpdate = ({ id, name, completed }: {
+    id: number, name?: string; completed?: boolean
+  }) => {
+    updateTask({
+      variables: {
+        id,
+        name,
+        completed,
+      }
+    })
     setOpenEditModal(false)
     setSelectedTask(null)
-    setEditValue('')
   }
 
   return (
@@ -203,14 +215,18 @@ const TaskScreen = () => {
       ) : (
           <TaskList>
             {data.tasks.map((task: TaskType) => (
-              <Task key={task.id}>
-                <span>{task.name}</span>
+              <Task
+                completed={task.completed} key={task.id}
+              >
+                <span onClick={() => handleUpdate({ id: task.id, name: task.name, completed: true })}>
+                  {task.name}
+                </span>
                 <div className="icons">
                   <FontAwesomeIcon
                     icon={faPen}
-                    onClick={() => handleClickUpdate(task.id, task.name)}
+                    onClick={() => handleClickUpdate(task)}
                   />
-                  <FontAwesomeIcon icon={faTrash} onClick={() => handleClickDelete(task.id)} />
+                  <FontAwesomeIcon icon={faTrash} onClick={() => handleClickDelete(task)} />
                 </div>
               </Task>
             ))}
@@ -224,8 +240,12 @@ const TaskScreen = () => {
       <EditTaskModal
         show={openEditModal}
         onHide={() => setOpenEditModal(false)}
-        mainButtonAction={(inputValue) => handleUpdate(selectedTask, inputValue)}
-        inputValue={editValue}
+        mainButtonAction={(inputValue) => {
+          if (selectedTask) {
+            handleUpdate({ id: selectedTask.id, name: inputValue, completed: selectedTask.completed })
+          }
+        }}
+        inputValue={selectedTask?.name || ''}
       />
     </Container>
   )
