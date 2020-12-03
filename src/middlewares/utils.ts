@@ -1,6 +1,5 @@
 import Router from 'next/router';
 import Cookies from 'js-cookie';
-import { NextApiRequest} from 'next'
 
 import jwt from 'jsonwebtoken';
 import { IncomingMessage } from 'http';
@@ -16,7 +15,10 @@ export function verifyToken(jwtToken: string) {
   try {
     return jwt.verify(jwtToken, SECRET_KEY);
   } catch (e) {
-    console.log('e:', e);
+    console.log('e', e)
+
+    Cookies.remove('token');
+
     return null;
   }
 }

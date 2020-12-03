@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
 import AppLayout from '../src/layout/app'
 import LoginScreen from '../src/screens/login'
-import { absoluteUrl, getAppCookies, verifyToken } from '../src/middlewares/utils'
+import { absoluteUrl, getAppCookies, setLogout, verifyToken } from '../src/middlewares/utils'
 
 
 type LoginPageProps = {
@@ -12,6 +13,16 @@ type LoginPageProps = {
 
 const LoginPage = (props: LoginPageProps) => {
   const { baseApiUrl, profile } = props
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (profile) {
+      router.push('/inicio')
+    } else {
+      setLogout()
+    }
+  }, [])
 
   return (
     <LoginScreen baseApiUrl={baseApiUrl} profile={profile} />
