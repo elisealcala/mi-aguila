@@ -7,13 +7,18 @@ import SideBar from '../components/sidebar'
 const Container = styled.div`
   display: flex;
   font-family: 'Montserrat';
+
+  & .container {
+    margin-left: 255px;
+    width: calc(100% - 255px);
+  }
 `
 
 const MainLayout: React.FC = ({ children }) => {
   return (
     <Container>
       <SideBar />
-      <div style={{ width: '100%' }}>
+      <div className="container">
         <NavBar />
         {children}
       </div>

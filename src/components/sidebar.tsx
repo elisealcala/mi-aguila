@@ -9,6 +9,7 @@ const SidebarStyled = styled.div`
   flex-direction: column;
   background-color: #363740;
   height: 100vh;
+  position: fixed;
   width: 255px;
 `
 
