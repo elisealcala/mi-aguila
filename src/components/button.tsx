@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const BaseButton = styled.button`
   display: flex;
-  width: 100px;
+  width: 100%;
   padding: 14px 8px;
   justify-content: center;
   cursor: pointer;
@@ -24,21 +24,22 @@ const SecondaryButton = styled(BaseButton)`
 
 type ButtonProps = {
   label: string;
-  onClick: () => void;
+  onClick?: () => void;
+  type?: "button" | "submit" | "reset";
   variant?: 'outlined' | 'contained'
 }
 
-const Button = ({ label, onClick, variant = 'contained' }: ButtonProps) => {
+const Button = ({ label, onClick, variant = 'contained', type }: ButtonProps) => {
   if (variant === "outlined") {
     return (
-      <SecondaryButton onClick={onClick}>
+      <SecondaryButton type={type} onClick={onClick}>
         {label}
       </SecondaryButton>
     )
   }
 
   return (
-    <PrimaryButton onClick={onClick}>
+    <PrimaryButton type={type} onClick={onClick}>
       {label}
     </PrimaryButton>
   )

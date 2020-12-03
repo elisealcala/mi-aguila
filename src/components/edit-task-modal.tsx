@@ -31,7 +31,7 @@ const StyledModal = styled(Modal)`
   `;
 
 const StyledInput = styled.input`
-  width: calc(100% - 32px);
+  width: calc(100% - 24px);
   border-width: 1px;
   border-color: #DFE0EB;
   font-weight: 300;
@@ -50,7 +50,7 @@ const ButtonsContainer = styled.div`
   margin-left: auto;
   align-items: center;
   margin-top: 20px;
-  & > button {
+  & button:first-child {
     margin-right: 20px;
   }
 `
